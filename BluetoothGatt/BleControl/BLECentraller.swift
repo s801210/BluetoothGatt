@@ -12,7 +12,7 @@ import CoreBluetooth
 public protocol BLECentrallerDelegate: NSObjectProtocol
 {
     func readData(characteristic:CBCharacteristic, peripheral:CBPeripheral)
-    func peripheralFound(peripheral: CBPeripheral, rssi: NSNumber, deviceName: NSString)
+    func peripheralFound(peripheral: CBPeripheral, rssi: NSNumber)
     func setConnect()
     func setDisconnect()
 }
@@ -29,7 +29,6 @@ class BLECentraller: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate
     var mPeripheral : CBPeripheral?
     let myStructure = mStructure()
 
-    
     // setup
     func setup(){
          centralManager = CBCentralManager.init(delegate: self, queue: nil)
@@ -40,8 +39,9 @@ class BLECentraller: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate
         peripherals.removeAll()
         RSSIs.removeAll()
         print("Now Scanning...")
-       // centralManager.scanForPeripherals(withServices: nil , options: [CBCentralManagerScanOptionAllowDuplicatesKey:false])
-        centralManager.scanForPeripherals(withServices: [CBUUID(string:mService_UUID)] , options: [CBCentralManagerScanOptionAllowDuplicatesKey:false])
+        //CBCentralManagerScanOptionAllowDuplicatesKey值為 false，表示不重複掃描已發現的設備
+        centralManager.scanForPeripherals(withServices: nil , options: [CBCentralManagerScanOptionAllowDuplicatesKey:true])
+//        centralManager.scanForPeripherals(withServices: [CBUUID(string:mService_UUID)] , options: [CBCentralManagerScanOptionAllowDuplicatesKey:false])
     }
     
     // stopScan
@@ -82,28 +82,19 @@ class BLECentraller: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate
      Called when the central manager discovers a peripheral while scanning. Also, once peripheral is connected, cancel scanning.
      */
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral,advertisementData: [String : Any], rssi RSSI: NSNumber) {
-        mPeripheral = peripheral
-        if(peripheral.name?.count == 0){
-            return
-        }
-        if(peripherals.count == 0){
-            self.peripherals.insert(peripheral.identifier.uuidString)
-            self.RSSIs.append(RSSI)
-            delegate?.peripheralFound(peripheral: peripheral, rssi: RSSI, deviceName: String(describing: peripheral.name) as NSString)
-        }else{
-            if self.peripherals.contains(peripheral.identifier.uuidString) == false
-            {
-                self.peripherals.insert(peripheral.identifier.uuidString)
-                self.RSSIs.append(RSSI)
-                delegate?.peripheralFound(peripheral: peripheral, rssi: RSSI, deviceName: String(describing: peripheral.name) as NSString)
-            }
-        }
-        peripheral.delegate = self
-        if mPeripheral == nil {
-            print("Found new pheripheral devices with services")
-            print("Peripheral name: \(String(describing: peripheral.name))")
-            print("Advertisement Data : \(advertisementData)")
-        }
+        // 如果名稱是空的就不是我們要的裝置
+//        if(peripheral.name == nil || peripheral.name?.count == 0){
+//            return
+//        }
+        
+        
+        // 找到後直後往後丟，後面處理就好了
+        delegate?.peripheralFound(peripheral: peripheral, rssi: RSSI)
+
+//            print("Found new pheripheral devices with services")
+//            print("Peripheral name: \(String(describing: peripheral.name))")
+//            print("Advertisement Data : \(advertisementData)")
+        
     }
 
     /*

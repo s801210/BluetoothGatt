@@ -55,12 +55,10 @@ class DeviceViewController: UIViewController,BLECentrallerDelegate {
     }
     
     func readData(characteristic: CBCharacteristic, peripheral: CBPeripheral) {
-        var tokenString = ""
-        let data = characteristic.value
         MessageTextView.text = characteristic.value?.hexEncodedString()
     }
     
-    func peripheralFound(peripheral: CBPeripheral, rssi: NSNumber, deviceName: NSString) {
+    func peripheralFound(peripheral: CBPeripheral, rssi: NSNumber) {
         
     }
     
