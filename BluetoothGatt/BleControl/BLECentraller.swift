@@ -40,8 +40,8 @@ class BLECentraller: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate
         RSSIs.removeAll()
         print("Now Scanning...")
         //CBCentralManagerScanOptionAllowDuplicatesKey值為 false，表示不重複掃描已發現的設備
-        centralManager.scanForPeripherals(withServices: nil , options: [CBCentralManagerScanOptionAllowDuplicatesKey:true])
-//        centralManager.scanForPeripherals(withServices: [CBUUID(string:mService_UUID)] , options: [CBCentralManagerScanOptionAllowDuplicatesKey:false])
+//        centralManager.scanForPeripherals(withServices: nil , options: [CBCentralManagerScanOptionAllowDuplicatesKey:true])
+        centralManager.scanForPeripherals(withServices: [CBUUID(string:mService_UUID)] , options: [CBCentralManagerScanOptionAllowDuplicatesKey:false])
     }
     
     // stopScan
